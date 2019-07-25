@@ -2,6 +2,7 @@ pub mod schema;
 pub mod db_connection;
 pub mod models;
 pub mod handlers;
+pub mod errors;
 
 #[macro_use]
 extern crate diesel;
@@ -17,6 +18,7 @@ extern crate actix_web;
 extern crate futures;
 use actix_web::{App, HttpServer, web};
 use db_connection::establish_connection;
+
 
 fn main() {
     let sys = actix::System::new("kom2steam");
@@ -34,6 +36,10 @@ fn main() {
                 .route(web::get().to_async(handlers::roles::show))
                 // .route(web::delete().to_async(handlers::roles::destroy))
                 .route(web::patch().to_async(handlers::roles::update))
+        )
+        .service(
+            web::resource("/register")
+                .route(web::post().to(handlers::register::register))
         )
     )
     .bind("127.0.0.1:8088").unwrap()
